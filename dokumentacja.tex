@@ -142,7 +142,7 @@ Językiem projektu był język opisu sprzętu VHDL. Stanowisko laboratoryjne/pro
 W tym podrozdziale znajdują się opisy i symulacje modułów stworzonych na zajęciach w ramach projektu.
 
 \subsubsection{Modulator2}
-Ten moduł odpowiedzialny jest za wysyłanie wartości ograniczającej licznik w module Synth2 na podstawie sygnału pochodzącego z klawiatury. Jest oparty na maszynie stanów, która składa się 14 stanów odpowiadających różnym dźwiękom w oktawie lub ciszy.
+Ten moduł odpowiedzialny jest za wysyłanie wartości ograniczającej licznik w module Synth2 na podstawie sygnału pochodzącego z klawiatury. Jest oparty na maszynie stanów, która składa się 14 stanów odpowiadających różnym dźwiękom w oktawie lub ciszy. Wartości, które zwraca moduł na wyjściu zostały obliczone w taki sposób, aby przy częstotliwości 50 MHz licznik w następnym module generował falę piłokształtną o odpowiedniej dla danego dźwięku i stanu częstotliwości.
 
 \begin{figure}[H]
 \center
@@ -161,7 +161,7 @@ Ten moduł odpowiedzialny jest za wysyłanie wartości ograniczającej licznik w
 
 \subsubsection*{Wyjścia modułu:}
 \begin{itemize}
-\item limit - symbolizuje wartość graniczną dla licznika
+\item limit[11:0] - symbolizuje wartość graniczną dla licznika
 \end{itemize}
 
 \subsubsection*{Fragmenty kodu VHDL}
@@ -298,9 +298,194 @@ Pierwszy proces jest typowym przykładem procesu odpowiedzialnego za przełącza
 \end{figure}
 Na powyższej symulacji widać jak w momencie impulsu sygnału do_rdy z najbliższym taktem zegara zmieniany jest stan maszyny zgodnie z wciśniętym klawiszem oraz ustawiany jest odpowieni limit. W momencie impulsu f0 (puszczenie klawisza) stan przełączany jest na silence, a limit na wartość zerową.
 
+\newpage
 \subsubsection{Synth2}
+Moduł ten odpowiada za generowanie fali piłokształtnej o odpowiedniej częstotliwości. Częstotliwość ta zależy od wartości limitu, którą moduł otrzymuje na wejściu.
+
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.5]{synthsymb.png}
+\caption{Symbol modułu Modulator2.}
+\end{figure}
+
+\subsubsection*{Wejścia modułu:}
+\begin{itemize}
+\item Clk - symbolizuje zegar
+\item Limit[11:0] - symbolizuje limit dla wewnętrznego licznika
+\end{itemize}
+
+\subsubsection*{Wyjścia modułu:}
+\begin{itemize}
+\item Start - symbolizuje gotowość danych do przetworzenia przez DAC
+\item Cmd - symbolizuje polecenie do wykonania
+\item Addr - symbolizuje adres przetwornika DAC
+\item Data[11:0] - symbolizuje dane do przetworzenia przez DAC
+\end{itemize}
+
+\subsubsection*{Fragmenty kodu VHDL}
+\begin{lstlisting}[caption=Proces modułu Synth2.]
+architecture Behavioral of Synth2 is
+   signal count: UNSIGNED(11 downto 0) := X"000";
+   signal waveCount: UNSIGNED(4 downto 0):= X"0"&'0';
+   signal lmt: STD_LOGIC_VECTOR(11 downto 0) := X"000";
+begin
+   lmt <= Limit;
+   process(Clk)
+   begin
+      if rising_edge(Clk) then
+         count <= count + 1;
+         start <= '0';
+         if STD_LOGIC_VECTOR(count) = lmt then
+            count <= X"000";
+            waveCount <= waveCount + 1;
+            start <= '1';
+         end if;
+      end if;
+   end process;
+   
+   Data <= STD_LOGIC_VECTOR(waveCount)&"0000000";
+   Cmd <= "0011";
+   Addr <= "1111";
+end Behavioral;
+
+\end{lstlisting}
+Moduł z każdym cyklem zegara zwiększa o jeden wartość wewnęrznego licznika, gdy licznik osiągnie limit zwiększany jest drugi licznik, który odpowiada generowanej fali. Wartość waveCount jest "doklejana" na początek wyjścia Data, aby osiągnąć większą amplitudę fali, czyli głośniejszy dźwięk. Komenda $Cmd <= "0011"$ oznacza natchmiastowe zaktualizowanie wartości na wybranym przetworniku o wskazaną wartość w $Data$. Natomiast adres $Addr <= "1111"$ oznacza wszystkie przetworniki na raz.
+
+\subsubsection*{Symulacja}
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.60]{synthsym1bw.png}
+\caption{Wyniki symulacji modułu Synth2.}
+\end{figure}
+Symulacja została przeprowadzona dla $Limit <= X"004"$, co oznacza, że co 4 cykle zegara wartość $waveCount$ powinna się zwiększać, co za tym idzie wyjście $Data$ powinno również się zwiększać.
+
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.60]{synthsym2bw.png}
+\caption{Wyniki symulacji modułu Synth2 w powiększeniu.}
+\end{figure}
 
 \subsubsection{Switch}
+Moduł ten jest odpowiedzialny za zarządzanie trybem pracy urządzenia. Na podstawie danych otrzymywany z klawiatury decyduje, czy urządzenie powinno odtwarzać dźwięki według klawiszy zczytywanych z klawiatury, nagrywać dane do pamięci RAM, czy też odtwarzać melodię z pamięci. Jest oparty na prostej trójstanowej maszynie stanu: $None, Play, Rec$.
+
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.60]{switchsymb.png}
+\caption{Symbol modułu Switch.}
+\end{figure}
+
+\subsubsection*{Wejścia modułu}
+\begin{itemize}
+\item Clk - symbolizuje zegar
+\item F0 - symbolizuje zwolnienie klawisza klawiatury
+\item E0 - symbolizuje czy dane to tzw. kod rozszerzony
+\item DO_Rdy - symbolizuje zakończenie odbierania kodu
+\item DO[7:0] - symbolizuje otrzymane dane z klawiatury
+\item LiveData[11:0] - symbolizuje dane otrzymywane z modułu Synth2.
+\item MemoryData[11:0] - symbolizuje dane otrzymywane z modułu RAM.
+\end{itemize}
+
+\subsubsection*{Wyjścia modułu}
+\begin{itemize}
+\item write_enable - symbolizuje pozowlenie na zapisywanie do pamięci RAM
+\item Data_out[11:0] - symbolizuje wychodzące dane wybrane spośród LiveData lub MemoryData
+\item Addr[11:0] - symbolizuje miejsce w pamięci RAM, z którego dane mają być wczytane lub do którego mają być zapisane.
+\end{itemize}
+
+\subsubsection*{Graf maszyny stanów}
+\begin{figure}[H]
+\center
+\includegraphics[scale=1]{switchmaszyna.png}
+\caption{Graf maszyny stanów modułu Switch.}
+\end{figure}
+$Rec$ oznacza nagrywanie, $Play$ oznacza odtwarzania nagrania, a $None$ oznacza odtwarzanie tylko dźwięków odczytanych z klawiatury.
+
+\subsubsection*{Fragmenty kodu VHDL}
+\begin{lstlisting}
+architecture Behavioral of Switch is
+   type state_type is (None, Rec, Play);
+   signal state, next_state: state_type;
+   signal TmpAddr: UNSIGNED(9 downto 0) := X"00"&"00";
+   signal count: UNSIGNED(19 downto 0) := X"00000";
+  
+begin
+   process1 : process( Clk )
+      begin
+         if rising_edge( Clk ) then
+            state <= next_state;
+         end if;
+   end process process1;
+   
+   process2: process (state, DO, F0, DO_Rdy)
+   begin
+      next_state <= state;
+      
+      if DO_Rdy = '1' and F0 = '0' then
+         case state is
+               when None =>
+                  if DO = X"5A" then
+                     next_state <= Play;
+                  elsif DO = X"29" then
+                     next_state <= Rec;
+                  end if;
+                  
+               when Play =>
+                  if DO = X"5A" then
+                     next_state <= None;
+                  end if;
+                  
+               when Rec =>
+                  if DO = X"29" then
+                     next_state <= None;
+                  end if;
+         end case;
+      end if;
+   end process;
+               
+   with state select
+      write_enable <= '1' when Rec,
+                      '0' when others;
+                      
+   with state select
+      Data_out <= Live_data when Rec,
+                  Memory_data when Play,
+                  Live_data when None;
+                      
+   Addr <= STD_LOGIC_VECTOR(TmpAddr);
+                      
+   process3: process (state, clk)
+   begin
+      if rising_edge(clk) then
+         if state = rec or state = play then
+            count <= count + 1;
+            if count = x"F4240" then
+               TmpAddr <= TmpAddr + 1;
+               count <=  X"00000";
+            end if;
+         else
+            count <= X"00000";
+            TmpAddr <= X"00"&"00";
+         end if;
+      end if;
+   end process;
+end Behavioral;
+\end{lstlisting}
+Pierwszy proces odpowiada za przechodzenie do następnego stanu. Drugi proces wybiera następny stan na podstawie wciśniętego klawisza. Moduł wybiera, który z $Live_data$ lub $Memory_data$ wysłać na wyjście w zależności od tego w jakim stanie się znajduje maszyna. Ostatni proces jest odpowiedzialny za przełączanie adresu co 0,02 sekundy w trakcie nagrywania lub odtwarzania nagrania oraz za zerowanie adresu w trybie $None$.
+
+\subsubsection*{Symulacja}
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.6]{switchsym1bw.png}
+\caption{Symulacja modułu Switch cz.1.}
+\end{figure}
+
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.6]{switchsym2bw.png}
+\caption{Symulacja modułu Switch cz.2.}
+\end{figure}
+
+Gdy stan maszyny jest w trybie $None$ na wyjście są wysyłane dane z $LiveData$ podobnie, w trybie $Rec$ z tą różnicą, że w trybie nagrywania dodatkowo aktywny jest sygnał $write_enable$, który pozwala na zapisywanie danych do pamięci RAM. W stanie $Play$ na wyjście modułu wysyłane są dane z wejscia $memory_data$, a $live_data$ jest ignorowane. Dodatkowo w trakcie nagrywania i odtwarzania zwiększa się licznik. Gdy osiągnie on wartość $X"F4240"$ czyli 1000000, zmienia się adres zapisu lub odczytu z modułu RAM. Dzięki temu, przy częstotliwości 50 MHz, sygnał jest próbkowany 50 razy w ciągu sekundy, czyli co 0,02s.
 
 \subsubsection{RAM}
 

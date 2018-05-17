@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Debian) (preloaded format=pdflatex 2017.10.17)  17 MAY 2018 08:23
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/Debian) (preloaded format=pdflatex 2017.10.17)  17 MAY 2018 15:07
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -708,31 +708,97 @@ Overfull \hbox (31.23087pt too wide) in paragraph at lines 296--297
  [] 
  []
 
-[7 <./modulatorMaszyna.png> <./modulatorsymbw.png (PNG copy)>] [8]
+[7 <./modulatorMaszyna.png> <./modulatorsymbw.png (PNG copy)>]
+<synthsymb.png, id=45, 286.06876pt x 237.13594pt>
+File: synthsymb.png Graphic file (type png)
+ <use synthsymb.png>
+Package pdftex.def Info: synthsymb.png used on input line 307.
+(pdftex.def)             Requested size: 143.03403pt x 118.56767pt.
+ [8 <./synthsymb.png (PNG copy)>] <synthsym1bw.png, id=49, 858.20625pt x 97.865
+63pt>
+File: synthsym1bw.png Graphic file (type png)
+
+<use synthsym1bw.png>
+Package pdftex.def Info: synthsym1bw.png used on input line 357.
+(pdftex.def)             Requested size: 514.92773pt x 58.71982pt.
+
+Overfull \hbox (31.23087pt too wide) in paragraph at lines 357--358
+ [] 
+ []
+
+<synthsym2bw.png, id=50, 858.20625pt x 97.86563pt>
+File: synthsym2bw.png Graphic file (type png)
+ <use synthsym2bw.png>
+Package pdftex.def Info: synthsym2bw.png used on input line 364.
+(pdftex.def)             Requested size: 514.92773pt x 58.71982pt.
+
+Overfull \hbox (31.23087pt too wide) in paragraph at lines 364--365
+ [] 
+ []
+
+<switchsymb.png, id=51, 255.20343pt x 386.94562pt>
+File: switchsymb.png Graphic file (type png)
+ <use switchsymb.png>
+Package pdftex.def Info: switchsymb.png used on input line 373.
+(pdftex.def)             Requested size: 153.12323pt x 232.16916pt.
+
+[9 <./synthsym1bw.png (PNG copy)> <./synthsym2bw.png (PNG copy)> <./switchsymb.
+png (PNG copy)>] <switchmaszyna.png, id=56, 402.50375pt x 109.40875pt>
+File: switchmaszyna.png Graphic file (type png)
+
+<use switchmaszyna.png>
+Package pdftex.def Info: switchmaszyna.png used on input line 398.
+(pdftex.def)             Requested size: 402.50276pt x 109.40846pt.
+ [10 <./switchmaszyna.png>]
+<switchsym1bw.png, id=61, 860.46469pt x 172.39406pt>
+File: switchsym1bw.png Graphic file (type png)
+ <use switchsym1bw.png>
+Package pdftex.def Info: switchsym1bw.png used on input line 478.
+(pdftex.def)             Requested size: 516.2828pt x 103.43723pt.
+
+Overfull \hbox (32.58594pt too wide) in paragraph at lines 478--479
+ [] 
+ []
+
+[11] <switchsym2bw.png, id=66, 857.45343pt x 176.15813pt>
+File: switchsym2bw.png Graphic file (type png)
+
+<use switchsym2bw.png>
+Package pdftex.def Info: switchsym2bw.png used on input line 484.
+(pdftex.def)             Requested size: 514.47601pt x 105.69568pt.
+
+Overfull \hbox (30.77914pt too wide) in paragraph at lines 484--485
+ [] 
+ []
+
+[12 <./switchsym1bw.png (PNG copy)> <./switchsym2bw.png (PNG copy)>]
 (./dokumentacja.aux) ) 
 Here is how much of TeX's memory you used:
- 4593 strings out of 493013
- 62026 string characters out of 6135681
- 533289 words of memory out of 5000000
- 8035 multiletter control sequences out of 15000+600000
+ 4679 strings out of 493013
+ 63250 string characters out of 6135681
+ 539289 words of memory out of 5000000
+ 8114 multiletter control sequences out of 15000+600000
  15146 words of font info for 43 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 39i,7n,58p,563b,1766s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plrm.en
-c}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plit.enc}{/usr/share/texliv
-e/texmf-dist/fonts/enc/dvips/pl/plsc.enc}</usr/share/texlive/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/p
-l/plbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/pl/plbx12.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/public/pl/plcsc10.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/public/pl/plr10.pfb></usr/share/texlive/texmf-dist/f
-onts/type1/public/pl/plr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/pl/plr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/pl/plr9.pfb></u
-sr/share/texlive/texmf-dist/fonts/type1/public/pl/plti12.pfb>
-Output written on dokumentacja.pdf (9 pages, 285200 bytes).
+ 39i,7n,58p,674b,1766s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plmi.en
+c}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/pl/plrm.enc}{/usr/share/texliv
+e/texmf-dist/fonts/enc/dvips/pl/plit.enc}{/usr/share/texlive/texmf-dist/fonts/e
+nc/dvips/pl/plsc.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cms
+y10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/pl/plbx10.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/public/pl/plbx12.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/pl/plcsc10.pfb></usr/share/texlive/texmf-dist/fonts
+/type1/public/pl/plmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/p
+l/plmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/pl/plr10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/pl/plr12.pfb></usr/share/texlive/
+texmf-dist/fonts/type1/public/pl/plr6.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/pl/plr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/pl/p
+lti12.pfb>
+Output written on dokumentacja.pdf (13 pages, 424168 bytes).
 PDF statistics:
- 84 PDF objects out of 1000 (max. 8388607)
- 56 compressed objects within 1 object stream
+ 114 PDF objects out of 1000 (max. 8388607)
+ 72 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 21 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 56 words of extra memory for PDF output out of 10000 (max. 10000000)
 
