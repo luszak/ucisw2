@@ -4,7 +4,7 @@
 \usepackage{latexsym}
 \usepackage{graphicx} 
 \usepackage{float}
-\usepackage[margin=2.5cm]{geometry}
+\usepackage[margin=2cm]{geometry}
 \usepackage{lscape}
 \usepackage{listings}
 \usepackage{color}
@@ -101,6 +101,9 @@ dr inż. Jarosław \textsc{Sugier} %TU
 
 \end{titlepage}
 
+\tableofcontents
+\newpage
+
 \section{Wprowadzenie}
 \subsection{Cel i zakres}
 Celem projektu było stworzenie jednooktawowego "instrumentu" klawiszowego, obsługiwanego za pomocą klawiatury PS/2. Wciskanie poszczególnych klawiszy miało powodować odtwarzanie dźwięków przez podpięty do pinów głośniczek. Dodatkowo częścią zadania było także zaimplementowanie funkcjonalności nagrywania melodii (zapis do pamięci ROM) i odtwarzania nagranego materiału, a także wykorzystanie wyświetlacza LCD do pokazania stanu nagrywania i diody LED do przekazania informacji o trwającym właśnie nagrywaniu.
@@ -112,7 +115,180 @@ Językiem projektu był język opisu sprzętu VHDL. Stanowisko laboratoryjne/pro
 
 \section{Projekt}
 \subsection{Schemat i hierarchia projektu}
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.35]{schemat.png}
+\caption{Schemat całego projektu.}
+\end{figure}
+\textbf{Hierarchia modułów:}
+\begin{itemize}
+\item schemat
+\begin{itemize}
+\item DACWrite
+\item Modulator2
+\item PS2_Kdb
+\item Synth2
+\item Switch
+\item RAM
+\item LCD1x64
+\item MsgGenerator
+\item ADC_DAC.ucf
+\item GenIO.ucf
+\item LCD.ucf
+\end{itemize}
+\end{itemize}
+
 \subsection{Moduły}
+W tym podrozdziale znajdują się opisy i symulacje modułów stworzonych na zajęciach w ramach projektu.
+
+\subsubsection{Modulator2}
+Ten moduł odpowiedzialny jest za wysyłanie wartości ograniczającej licznik w module Synth2 na podstawie sygnału pochodzącego z klawiatury. Jest oparty na maszynie stanów, która składa się 14 stanów odpowiadających różnym dźwiękom w oktawie lub ciszy.
+
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.5]{modulatorSymb.png}
+\caption{Symbol modułu Modulator2.}
+\end{figure}
+
+\subsubsection*{Wejścia modułu:}
+\begin{itemize}
+\item F0 - symbolizuje zwolnienie klawisza klawiatury
+\item E0 - symbolizuje czy dane to tzw. kod rozszerzony
+\item DO_Rdy - symbolizuje zakończenie odbierania kodu
+\item Clk - symbolizuje zegar
+\item DO[7:0] - symbolizuje otrzymane dane z klawiatury
+\end{itemize}
+
+\subsubsection*{Wyjścia modułu:}
+\begin{itemize}
+\item limit - symbolizuje wartość graniczną dla licznika
+\end{itemize}
+
+\subsubsection*{Fragmenty kodu VHDL}
+\begin{lstlisting}
+architecture Behavioral of Modulator2 is
+   type state_type is (Silence, C, Cis, D, Dis, E, F, Fis, G, Gis, A, Ais, H, C2);
+   signal state, next_state: state_type;
+begin
+
+   process1 : process( Clk )
+   begin
+         if rising_edge( Clk ) then
+            if Reset = '1' then
+               state <= Silence;
+            else
+               state <= next_state;
+            end if;
+         end if;
+   end process process1;
+   
+   process2: process (state, DO, F0, DO_Rdy)
+   begin
+      next_state <= state;
+      
+      if DO_Rdy = '1' and F0 = '0' then
+      
+         case state is
+            when Silence =>
+               if DO = X"1C" then
+                  next_state <= C;
+               elsif DO = X"1D" then
+                  next_state <= Cis;
+               elsif DO = X"1B" then
+                  next_state <= D;
+               elsif DO = X"24" then
+                  next_state <= Dis;
+               elsif DO = X"23" then
+                  next_state <= E;
+               elsif DO = X"2B" then
+                  next_state <= F;
+               elsif DO = X"2C" then
+                  next_state <= Fis;
+               elsif DO = X"34" then
+                  next_state <= G;
+               elsif DO = X"35" then
+                  next_state <= Gis;
+               elsif DO = X"33" then
+                  next_state <= A;
+               elsif DO = X"3C" then
+                  next_state <= Ais;
+              elsif DO = X"3B" then
+                  next_state <= H;
+              elsif DO = X"42" then
+                  next_state <= C2;
+              end if;
+              
+            when C =>
+               next_state <= state;
+               
+            when Cis =>
+               next_state <= state;
+               
+            when D =>
+               next_state <= state;
+               
+            when Dis =>
+               next_state <= state;
+            
+            when E =>
+               next_state <= state;
+               
+            when F =>
+               next_state <= state;
+               
+           when Fis =>
+               next_state <= state;
+               
+           when G =>
+               next_state <= state;
+           
+           when Gis =>
+               next_state <= state;
+               
+            when A =>
+               next_state <= state;
+               
+            when Ais =>
+               next_state <= state;
+               
+            when H =>
+               next_state <= state;
+               
+            when C2 =>
+               next_state <= state;
+         end case;
+      elsif F0 = '1' then
+         next_state <= Silence;
+      end if;
+   end process process2;
+   
+   with state select
+      Limit <= X"5D4" when C,
+               X"581" when Cis,
+               X"532" when D,
+               X"4E7" when Dis,
+               X"4A1" when E,
+               X"45E" when F,
+               X"41F" when Fis,
+               X"3E4" when G,
+               X"3AC" when Gis,
+               X"377" when A,
+               X"345" when Ais,
+               X"316" when H,
+               X"2EA" when C2,
+               X"000" when others;
+
+end Behavioral;
+\end{lstlisting}
+\subsubsection*{Graf maszyny stanu}
+
+\subsubsection*{Symulacja}
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.6]{modulatorsymbw.png}
+\caption{Wyniki symulacji modułu Modulator2.}
+\end{figure}
+*wstawić opis*
 
 \section{Implementacja}
 \subsection{Zasoby}
