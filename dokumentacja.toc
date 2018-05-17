@@ -6,8 +6,12 @@
 \contentsline {subsection}{\numberline {2.1}Schemat i hierarchia projektu}{3}
 \contentsline {subsection}{\numberline {2.2}Modu\IeC {\l }y}{4}
 \contentsline {subsubsection}{\numberline {2.2.1}Modulator2}{4}
-\contentsline {section}{\numberline {3}Implementacja}{7}
-\contentsline {subsection}{\numberline {3.1}Zasoby}{7}
-\contentsline {subsection}{\numberline {3.2}"User manual" urz\IeC {\k a}dzenia}{7}
-\contentsline {section}{\numberline {4}Podsumowanie}{7}
-\contentsline {section}{\numberline {5}Literatura}{7}
+\contentsline {subsubsection}{\numberline {2.2.2}Synth2}{8}
+\contentsline {subsubsection}{\numberline {2.2.3}Switch}{8}
+\contentsline {subsubsection}{\numberline {2.2.4}RAM}{8}
+\contentsline {subsubsection}{\numberline {2.2.5}MsgGenerator}{8}
+\contentsline {section}{\numberline {3}Implementacja}{8}
+\contentsline {subsection}{\numberline {3.1}Zasoby}{8}
+\contentsline {subsection}{\numberline {3.2}"User manual" urz\IeC {\k a}dzenia}{8}
+\contentsline {section}{\numberline {4}Podsumowanie}{8}
+\contentsline {section}{\numberline {5}Literatura}{8}

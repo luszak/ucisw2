@@ -165,7 +165,7 @@ Ten moduł odpowiedzialny jest za wysyłanie wartości ograniczającej licznik w
 \end{itemize}
 
 \subsubsection*{Fragmenty kodu VHDL}
-\begin{lstlisting}
+\begin{lstlisting}[caption=Procesy modułu Modulator2.]
 architecture Behavioral of Modulator2 is
    type state_type is (Silence, C, Cis, D, Dis, E, F, Fis, G, Gis, A, Ais, H, C2);
    signal state, next_state: state_type;
@@ -280,7 +280,15 @@ begin
 
 end Behavioral;
 \end{lstlisting}
+Architektura jednostki na samym początku posiada deklarację wszystkich stanów, które odpowiadają dźwiękom w oktawie lub ciszy.
+Pierwszy proces jest typowym przykładem procesu odpowiedzialnego za przełączanie stanu w maszynie stanów. Kolejny proces odpowiada za wybranie odpowiedniego stanu w zależności od wciśniętego klawisza. Ostatni element modułu to ustawianie odpowiedniego limitu w zależności od aktualnego stanu.
+
 \subsubsection*{Graf maszyny stanu}
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.6]{modulatorMaszyna.png}
+\caption{Graf maszyny stanów modułu Modulator2.}
+\end{figure}
 
 \subsubsection*{Symulacja}
 \begin{figure}[H]
@@ -288,7 +296,15 @@ end Behavioral;
 \includegraphics[scale=0.6]{modulatorsymbw.png}
 \caption{Wyniki symulacji modułu Modulator2.}
 \end{figure}
-*wstawić opis*
+Na powyższej symulacji widać jak w momencie impulsu sygnału do_rdy z najbliższym taktem zegara zmieniany jest stan maszyny zgodnie z wciśniętym klawiszem oraz ustawiany jest odpowieni limit. W momencie impulsu f0 (puszczenie klawisza) stan przełączany jest na silence, a limit na wartość zerową.
+
+\subsubsection{Synth2}
+
+\subsubsection{Switch}
+
+\subsubsection{RAM}
+
+\subsubsection{MsgGenerator}
 
 \section{Implementacja}
 \subsection{Zasoby}
