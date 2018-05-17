@@ -488,8 +488,113 @@ Pierwszy proces odpowiada za przechodzenie do następnego stanu. Drugi proces wy
 Gdy stan maszyny jest w trybie $None$ na wyjście są wysyłane dane z $LiveData$ podobnie, w trybie $Rec$ z tą różnicą, że w trybie nagrywania dodatkowo aktywny jest sygnał $write_enable$, który pozwala na zapisywanie danych do pamięci RAM. W stanie $Play$ na wyjście modułu wysyłane są dane z wejscia $memory_data$, a $live_data$ jest ignorowane. Dodatkowo w trakcie nagrywania i odtwarzania zwiększa się licznik. Gdy osiągnie on wartość $X"F4240"$ czyli 1000000, zmienia się adres zapisu lub odczytu z modułu RAM. Dzięki temu, przy częstotliwości 50 MHz, sygnał jest próbkowany 50 razy w ciągu sekundy, czyli co 0,02s.
 
 \subsubsection{RAM}
+Jest to pamięć, która pozwala na zapisywanie i czytywanie danych.
+
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.8]{ramsymb.png}
+\caption{Symbol modułu RAM.}
+\end{figure}
+
+\subsubsection*{Wejścia modułu}
+\begin{itemize}
+\item clk - symbolizuje zegar
+\item write_enable - symbolizuje pozwolenie na zapisywanie do pamięci
+\item data_in[11:0] - symbolizuje dane do zapisania
+\item address[9:0] - symbolizuje addres z którego należy czytać, lub do którego należy zapisywać dane
+\end{itemize}
+
+\subsubsection*{Wyjścia modułu}
+\begin{itemize}
+\item data_out[11:0] - symbolizuje dane wczytywane z pamięci.
+\end{itemize}
+
+\subsubsection*{Fragmenty kodu VHDL}
+\begin{lstlisting}
+architecture Behavioral of RAM is
+   type ram_type is array (0 to 1023) of std_logic_vector (11 downto 0);                 
+   signal memory : ram_type := (others => X"000");
+begin
+   process (clk)
+   begin
+      if (clk'event and clk = '1') then
+         if (write_enable = '1') then
+            memory(conv_integer(address)) <= data_in;
+         end if;
+         data_out <= memory(conv_integer(address));
+      end if;
+   end process;
+end Behavioral;
+\end{lstlisting}
+Moduł w zależności od wartości $write_enable$ pozwala na zapisywanie lub wczytywanie z podanego na wejściu adresu.
 
 \subsubsection{MsgGenerator}
+Moduł ten odpowiada za wyświetlanie na ekranie wizualnej reprezentacji ile czasu pozostało do końca czasu nagrywania.
+
+\begin{figure}[H]
+\center
+\includegraphics[scale=0.8]{msggen.png}
+\caption{Symbol modułu MsgGenerator.}
+\end{figure}
+
+\subsubsection*{Wejścia modułu}
+\begin{itemize}
+\item Clk - symbolizuje zegar
+\item Rec - symbolizuje tryb nagrywania
+\item Play - symbolizuje tryb odtwarzania
+\end{itemize}
+
+\subsubsection*{Wyjścia modułu}
+\begin{itemize}
+\item Line[63:0] - symbolizuje dane wyjściowe na wyświetlaczu LCD
+\item Blank[15:0] - symbolizuje które znaki mają być wyświetlane
+\end{itemize}
+
+\subsubsection*{Fragmenty kodu VHDL}
+\begin{lstlisting}[caption=Procesy modułu MsgGenerator.]
+architecture Behavioral of MsgGenerator is
+   signal counter: UNSIGNED(27 downto 0) := X"0000000";
+   signal show: UNSIGNED(3 downto 0) := X"0";
+begin
+   Line <= x"0000000000000000";
+   process (Clk)
+   begin
+      if rising_edge(Clk) then
+         if Rec = '1' then
+            counter <= counter + 1;
+            if counter = x"3d09000" then
+                show <= show +1;
+                counter <= X"0000000";
+            end if;
+         else
+            counter <= X"0000000";
+            show <= X"0";
+         end if;
+      end if;
+   end process;
+   
+   with show select
+       Blank <= X"0001" when X"0",
+                X"0003" when X"1",
+                X"0007" when X"2",
+                X"000F" when X"3",
+                X"001F" when X"4",
+                X"003F" when X"5",
+                X"007F" when X"6",
+                X"00FF" when X"7",
+                X"01FF" when X"8",
+                X"03FF" when X"9",
+                X"07FF" when X"A",
+                X"0FFF" when X"B",
+                X"1FFF" when X"C",
+                X"3FFF" when X"D",
+                X"7FFF" when X"E",
+                X"FFFF" when X"F",
+                X"0000" when others;     
+end Behavioral;
+\end{lstlisting}
+
+Moduł wyświetla tylko same zera, jednak z biegnącym czasem kolejne zera znikają, co symbolizuje kończący się czas nagrywania.
 
 \section{Implementacja}
 \subsection{Zasoby}
